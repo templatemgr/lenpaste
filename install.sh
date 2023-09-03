@@ -48,11 +48,14 @@ __get_version() { printf '%s\n' "${1:-$(cat "/dev/stdin")}" | awk -F. '{ printf(
 # Define Variables
 EXPECTED_OS="alpine"
 TEMPLATE_NAME="lenpaste"
-CONFIG_CHECK_FILE=""
+CONFIG_CHECK_FILE="lenpaste/config.conf"
 OVER_WRITE_INIT="yes"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 TMP_DIR="/tmp/config-$TEMPLATE_NAME"
 CONFIG_DIR="/usr/local/share/template-files/config"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+WWW_ROOT_DIR="${WWW_ROOT_DIR:-/usr/share/httpd/default}"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 INIT_DIR="/usr/local/etc/docker/init.d"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 GIT_REPO="https://github.com/templatemgr/$TEMPLATE_NAME"
@@ -61,8 +64,6 @@ OS_RELEASE="$(grep -si "$EXPECTED_OS" /etc/*-release* | sed 's|.*=||g;s|"||g' | 
 [ -n "$OS_RELEASE" ] || { echo "Unexpected OS: ${OS_RELEASE:-N/A}" && exit 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ "$TEMPLATE_NAME" != "sample-template" ] || { echo "Please set TEMPLATE_NAME" && exit 1; }
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -d "$TMP_DIR" ] && rm -Rf "$TMP_DIR"
 git clone -q "$GIT_REPO" "$TMP_DIR" || { echo "Failed to clone the repo" exit 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main application
@@ -109,14 +110,21 @@ if [ -d "$TMP_DIR/init-scripts" ]; then
   fi
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -d "$TMP_DIR/bin" ] && chmod -Rf 755 "$TMP_DIR/bin/" && cp -Rf "$TMP_DIR/bin/." "/usr/local/bin/"
+if [ -d "$TMP_DIR/www" ]; then
+  rm -Rf "$WWW_ROOT_DIR"
+  mkdir -p "$WWW_ROOT_DIR"
+  cp -Rf "$TMP_DIR/www/." "$WWW_ROOT_DIR/"
+fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 [ -d "$INIT_DIR" ] && chmod -Rf 755 "$INIT_DIR"/*.sh || true
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+[ -d "$TMP_DIR/bin" ] && chmod -Rf 755 "$TMP_DIR/bin/" && cp -Rf "$TMP_DIR/bin/." "/usr/local/bin/" || true
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Other files to copy to system
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-[ -d "$TMP_DIR" ] && rm -Rf "$TMP_DIR"
+# custom operations
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 if [ -n "$CONFIG_CHECK_FILE" ]; then
   if [ ! -f "$CONFIG_DIR/$CONFIG_CHECK_FILE" ]; then
@@ -127,8 +135,7 @@ else
   echo "CONFIG_CHECK_FILE not enabled"
 fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# custom operations
-
+[ -d "$TMP_DIR" ] && rm -Rf "$TMP_DIR"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # End application
 # eval "$BASH_SET_SAVED_OPTIONS"

@@ -216,7 +216,7 @@ __update_conf_files() {
 __pre_execute() {
   local exitCode=0                                               # default exit code
   local sysname="${SERVER_NAME:-${FULL_DOMAIN_NAME:-$HOSTNAME}}" # set hostname
-
+  [ -f "$CONF_DIR/config.conf" ] && . "$CONF_DIR/config.conf"
   # define commands
   [ -f "$DATA_DIR/about" ] && EXEC_CMD_ARGS+='-server-about $DATA_DIR/about '
   [ -f "$DATA_DIR/rules" ] && EXEC_CMD_ARGS+='-server-rules $DATA_DIR/rules '
