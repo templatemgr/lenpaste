@@ -133,7 +133,7 @@ EXEC_PRE_SCRIPT=''                                                              
 IS_WEB_SERVER="no"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Is this service a database server
-IS_DATABASE_SERVICE="no"
+IS_DATABASE_SERVICE="yes"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Load variables from config
 [ -f "$CONF_DIR/env/lenpaste.sh" ] && . "$CONF_DIR/env/lenpaste.sh"
@@ -178,7 +178,7 @@ __update_conf_files() {
   #__rm ""
 
   # execute if directory is empty
-  #__is_dir_empty "" && true || false
+  __is_dir_empty "" && mkdir -p "$DATABASE_DIR"
 
   # Initialize templates
   if [ ! -d "$CONF_DIR" ] || __is_dir_empty "$CONF_DIR"; then
