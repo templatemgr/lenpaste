@@ -125,9 +125,9 @@ SERVICE_UID="0" # set the user id
 SERVICE_GID="0" # set the group id
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # execute command variables - keep single quotes variables will be expanded later
-EXEC_CMD_BIN='lenpaste'                                                                    # command to execute
+EXEC_CMD_BIN='lenpaste'                                                                         # command to execute
 EXEC_CMD_ARGS='-address :$SERVICE_PORT -db-driver sqlite3 -db-source $DATABASE_DIR/lenpaste.db' # command arguments
-EXEC_PRE_SCRIPT=''                                                                         # execute script before
+EXEC_PRE_SCRIPT=''                                                                              # execute script before
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Is this service a web server
 IS_WEB_SERVER="no"
@@ -161,7 +161,9 @@ CMD_ENV=""
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Per Application Variables or imports
-
+LENPASTE_BODY_MAX_LENGTH="${LENPASTE_BODY_MAX_LENGTH:-100000}"
+LENPASTE_ADMIN_NAME="${LENPASTE_ADMIN_NAME:-Pastebin Admin}"
+LENPASTE_ADMIN_MAIL="${SERVER_ADMIN:-admin@${SERVER_NAME:-${FULL_DOMAIN_NAME:-$HOSTNAME}}}"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Custom prerun functions - IE setup WWW_ROOT_DIR
 
@@ -199,10 +201,10 @@ __update_conf_files() {
 
   # custom commands
   [ -f "/entrypoint.sh" ] && rm -Rf "/entrypoint.sh"
-  [ -d "$DEFAULT_CONF_DIR/html" ] || mkdir -p "$DEFAULT_CONF_DIR/html"
-  [ -f "$DEFAULT_CONF_DIR/html/about" ] || touch "$DEFAULT_CONF_DIR/html/about"
-  [ -f "$DEFAULT_CONF_DIR/html/rules" ] || touch "$DEFAULT_CONF_DIR/html/rules"
-  [ -f "$DEFAULT_CONF_DIR/html/terms" ] || touch "$DEFAULT_CONF_DIR/html/terms"
+  [ -d "$DATA_DIR/html" ] || mkdir -p "$DATA_DIR/html"
+  [ -f "$DATA_DIR/html/about" ] || touch "$DATA_DIR/html/about"
+  [ -f "$DATA_DIR/html/rules" ] || touch "$DATA_DIR/html/rules"
+  [ -f "$DATA_DIR/html/terms" ] || touch "$DATA_DIR/html/terms"
 
   # unset unneeded variables
   unset application_files filedirs
