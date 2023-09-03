@@ -126,7 +126,7 @@ SERVICE_GID="0" # set the group id
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # execute command variables - keep single quotes variables will be expanded later
 EXEC_CMD_BIN='lenpaste'                                                                    # command to execute
-EXEC_CMD_ARGS='-address $HOSTNAME -db-driver sqlite3 -db-source $DATABASE_DIR/lenpaste.db' # command arguments
+EXEC_CMD_ARGS='-address :$SERVICE_PORT -db-driver sqlite3 -db-source $DATABASE_DIR/lenpaste.db' # command arguments
 EXEC_PRE_SCRIPT=''                                                                         # execute script before
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Is this service a web server
